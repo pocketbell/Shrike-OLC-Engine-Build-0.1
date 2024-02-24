@@ -1,7 +1,7 @@
 Learning C++ and building systems.
 
 
-//ADDED ARRAY UPDATE TO A FIXED TIME OUTSIDE OF PRINTING, FPS WENT FROM 300 to 3000.
+
 
 //Systems "Complete":
 
