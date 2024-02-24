@@ -1,13 +1,17 @@
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
 
+
+//Global Vars
 float globalX = 0;
 float globalY = 0;
 int globalXN = globalX;
 int globalYN = globalY;
+
+//Player Vars
 float playerX = 150;
 float playerY = 50;
-float playerSpeed = 50.0f;
+float playerSpeed = 100.0f;
 int playNX = playerX;
 int playNY = playerY;
 
@@ -20,18 +24,13 @@ float fAccumulatedTime = 0.0f;
 //Play Window offset off Global X & Y.
 int world[2000][2000]{};
 
+//Future Arrays needed for drawing multiple layers to screen.
+//Spells and Weather.
 int playField[2000][2000]{};
+
 
 //What the screen prints.
 int screen[200][300]{};
-
-
-//Updated per frame based on the number inside the screen array @ pixel pos.
-int red = 0;
-int green = 0;
-int blue = 0;
-
-
 
 
 //UI Rects - Print to Screen Direct
@@ -150,7 +149,6 @@ public:
 };
 
 
-
 //Player Objects
 class RectPlayer
 {
@@ -219,6 +217,13 @@ public:
 };
 
 
+//Updated per frame based on the number inside the screen array @ pixel pos.
+//Need to add more colors and actually sort them.
+//Leave 1 - 10 for ground colors, or maybe 1 - 20.
+//Big switch.
+int red = 0;
+int green = 0;
+int blue = 0;
 int colorPicker(int i)
 {
 	switch (i)
@@ -253,6 +258,9 @@ int colorPicker(int i)
 
 
 //UI Rects
+//Makes all the windows around the screen
+//Not printed where Play area is, need to Bool swap if menu key is pressed still.
+//Also add style.
 int uiConstruct()
 {
 
@@ -278,7 +286,8 @@ int uiConstruct()
 	return 0;
 }
 
-//
+//Populates the World Array.
+//Need to start adding style.
 int worldFill()
 {
 	Rect2 worldBorder;
@@ -309,6 +318,8 @@ int worldFill()
 }
 
 
+//Shout out OLC Pixel Engine.
+//Where the magic comes to life.
 class olcEngine : public olc::PixelGameEngine
 {
 public:
@@ -320,7 +331,6 @@ public:
 public:
 	bool OnUserCreate() override
 	{
-		//worldFill();
 
 		// Called once at the start, so create things here
 		return true;
@@ -329,80 +339,87 @@ public:
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 
-		//Updates World Location
-		//worldFill();
 
-
+		//TIMER
 		fAccumulatedTime += fElapsedTime;
 
+		//UPDATES FOR DRAWING
+		//UPDATES FOR DRAWING
 		if (fAccumulatedTime >= fTargetFrameTime)
 		{
 			fAccumulatedTime -= fTargetFrameTime;
 			fElapsedTime = fTargetFrameTime;
 			worldFill();
 			uiConstruct();
+			playerSprite.showSelf();
 		}
 
-		//UI Layout
-		//uiConstruct();
-
-		//Player Drawings
-		playerSprite.showSelf();
+	
+		//Player POS UPDATES
 		playerSprite.posX = playerX;
 		playerSprite.posY = playerY;
+		//Player Float to Int
 		int playNX = playerX;
 		int playNY = playerY;
 
+		//Global Float to Int
 		int globalXN = globalX;
 		int globalYN = globalY;
 
 
-		if (GetKey(olc::Key::LEFT).bHeld)
+		//Movement Keys - -WASD
+		if ((GetKey(olc::Key::A).bHeld) != (GetKey(olc::Key::D).bHeld))
 		{
-			if ((world[playNY][playNX - 1] == 2)&& world[playNY + 19][playNX - 1] == 2)
+			if (GetKey(olc::Key::A).bHeld)
 			{
-				playerX -= (playerSpeed * fElapsedTime);
-				if ((globalX > 0 && playerX > 50) && playerX < 1920)
+				if ((world[playNY][playNX - 1] == 2) && world[playNY + playerSprite.height - 1][playNX - 1] == 2)
 				{
-					globalX -= (playerSpeed * fElapsedTime);
+					playerX -= (playerSpeed * fElapsedTime);
+					if ((globalX > 0 && playerX > 50) && playerX < 1920)
+					{
+						globalX -= (playerSpeed * fElapsedTime);
+					}
 				}
+
 			}
-			
-		};
-		if (GetKey(olc::Key::RIGHT).bHeld)
-		{
-			if ((world[playNY][playNX + 20] == 2) && world[playNY + 19][playNX + 20] == 2)
+			else if (GetKey(olc::Key::D).bHeld)
 			{
-				playerX += (playerSpeed * fElapsedTime);
-				if ((globalX < 2000 && playerX < 1920) && playerX > 120)
+				if ((world[playNY][playNX + 20] == 2) && world[playNY + playerSprite.height - 1][playNX + 20] == 2)
 				{
-					globalX += (playerSpeed * fElapsedTime);
-				}
-			}
-		}
-		if (GetKey(olc::Key::UP).bHeld)
-		{
-			if ((world[playNY - 1][playNX] == 2) && world[playNY - 1][playNX + 19] == 2)
-			{
-				playerY -= (playerSpeed * fElapsedTime);
-				if ((globalY > 0 && playerY > 50) && playerY < 1930)
-				{
-					globalY -= (playerSpeed * fElapsedTime);
+					playerX += (playerSpeed * fElapsedTime);
+					if ((globalX < 2000 && playerX < 1920) && playerX > 120)
+					{
+						globalX += (playerSpeed * fElapsedTime);
+					}
 				}
 			}
 		}
-		if (GetKey(olc::Key::DOWN).bHeld) 
+		if ((GetKey(olc::Key::W).bHeld) != (GetKey(olc::Key::S).bHeld))
 		{
-			if ((world[playNY + 20][playNX] == 2) && world[playNY + 20][playNX + 19] == 2)
+			if (GetKey(olc::Key::W).bHeld)
 			{
-				playerY += (playerSpeed * fElapsedTime);
-				if ((globalY < 2000 && playerY < 1920) && playerY > 70)
+				if ((world[playNY - 1][playNX] == 2) && world[playNY - 1][playNX + playerSprite.width - 1] == 2)
 				{
-					globalY += (playerSpeed * fElapsedTime);
+					playerY -= (playerSpeed * fElapsedTime);
+					if ((globalY > 0 && playerY > 50) && playerY < 1930)
+					{
+						globalY -= (playerSpeed * fElapsedTime);
+					}
+				}
+			}
+			else if (GetKey(olc::Key::S).bHeld)
+			{
+				if ((world[playNY + 20][playNX] == 2) && world[playNY + 20][playNX + playerSprite.width - 1] == 2)
+				{
+					playerY += (playerSpeed * fElapsedTime);
+					if ((globalY < 2000 && playerY < 1920) && playerY > 70)
+					{
+						globalY += (playerSpeed * fElapsedTime);
+					}
 				}
 			}
 		}
-		playerSprite.showSelf();
+
 
 		// called once per frame
 		//VIDEO OUTPUT
@@ -410,7 +427,7 @@ public:
 			for (int x = 0; x <= ScreenWidth(); x++)
 			{
 				if ((x > ((ScreenWidth() / 2) - 130) / 2 && x < ((ScreenWidth() / 2) + 99)) && (y > ((ScreenHeight() / 2) - 79) / 2 && y < ((ScreenHeight() / 2) + 49)))
-				{//(y > ((ScreenHeight() / 2) - 40) / 2 && y < ((ScreenHeight() / 2) + 30))
+				{
 					colorPicker(world[(y + globalYN)][(x + globalXN)]);
 				}
 				else
