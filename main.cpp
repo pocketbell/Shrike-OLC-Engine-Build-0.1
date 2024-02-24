@@ -312,6 +312,17 @@ int worldFill()
 	building01.windowFill = 3;
 	building01.showSelf();
 
+	Rect2 building02;
+	building02.height = 40;
+	building02.width = 40;
+	building02.posX = 200;
+	building02.posY = 70;
+	building02.xBord = 4;
+	building02.yBord = 4;
+	building02.windowEdge = 1;
+	building02.windowFill = 3;
+	building02.showSelf();
+
 
 
 	return 0;
