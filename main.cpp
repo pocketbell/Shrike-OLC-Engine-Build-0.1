@@ -1,14 +1,24 @@
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
 
-int globalX = 0;
-int globalY = 0;
+float globalX = 0;
+float globalY = 0;
+int globalXN = globalX;
+int globalYN = globalY;
+float playerX = 150;
+float playerY = 50;
+float playerSpeed = 50.0f;
+int playNX = playerX;
+int playNY = playerY;
+
 
 //Play Window offset off Global X & Y.
 int world[2000][2000]{};
 
+int playField[2000][2000]{};
+
 //What the screen prints.
-int screen[300][200]{};
+int screen[200][300]{};
 
 
 //Updated per frame based on the number inside the screen array @ pixel pos.
@@ -16,24 +26,33 @@ int red = 0;
 int green = 0;
 int blue = 0;
 
+
+
+
 //UI Rects - Print to Screen Direct
 class Rect1
 {
 private:
 	int drawSelf(int h, int w, int xb, int yb, int x, int y, int e, int f)
 	{
-		for (int i = y; i <= (y + (w - 1)); i++)
+		for (int i = y; i <= (y + (h - 1)); i++)
 		{
-			for (int l = x; l <= (x + (h - 1)); l++)
+			for (int l = x; l <= (x + (w - 1)); l++)
 			{
-				if (i <= (y + yb) || i >= y + (w - (1 + yb)) || l <= (x + xb) || l >= x + (h - (1 + xb)))
+				if (i <= (y + yb) || i >= y + (h - (1 + yb)) || l <= (x + xb) || l >= x + (w - (1 + xb)))
 				{
-					screen[i][l] = e;
+					if (screen[i][l] != e)
+					{
+						screen[i][l] = e;
+					}
 				}
 				else
 				{
 					//This could be used for collision with a 2d array as bones later.
-					screen[i][l] = f;
+					if (screen[i][l] != f)
+					{
+						screen[i][l] = f;
+					}
 				}
 
 
@@ -46,9 +65,9 @@ private:
 	
 
 public:
-	int width = 20;
 	int height = 20;
-
+	int width = 20;
+	
 	int xBord = 0;
 	int yBord = 0;
 
@@ -67,25 +86,31 @@ public:
 
 }; 
 
-//World Rects - Moved off of the Global X & Y
-//NOT YET WORKING.
+
+//World Fill
 class Rect2
 {
 private:
-	int drawSelf(int w, int h, int xb, int yb, int x, int y, int e, int f)
+	int drawSelf(int h, int w, int xb, int yb, int x, int y, int e, int f)
 	{
-		for (int i = y; i <= (y + (w - 1)); i++)
+		for (int i = y; i <= (y + (h - 1)); i++)
 		{
-			for (int l = x; l <= (x + (h - 1)); l++)
+			for (int l = x; l <= (x + (w - 1)); l++)
 			{
-				if (i <= (y + yb) || i >= y + (w - (1 + yb)) || l <= (x + xb) || l >= x + (h - (1 + xb)))
+				if (i <= (y + yb) || i >= y + (h - (1 + yb)) || l <= (x + xb) || l >= x + (w - (1 + xb)))
 				{
-					world[i][l] = e;
+					if (world[i][l] != e)
+					{
+						world[i][l] = e;
+					}
 				}
 				else
 				{
 					//This could be used for collision with a 2d array as bones later.
-					world[i][l] = f;
+					if (world[i][l] != f)
+					{
+						world[i][l] = f;
+					}
 				}
 
 
@@ -98,8 +123,8 @@ private:
 
 
 public:
-	int width = 20;
 	int height = 20;
+	int width = 20;
 
 	int xBord = 0;
 	int yBord = 0;
@@ -120,7 +145,75 @@ public:
 };
 
 
+
+//Player Objects
+class RectPlayer
+{
+private:
+	int drawSelf(int h, int w, int xb, int yb, int x, int y, int e, int f)
+	{
+		for (int i = y; i <= (y + (h - 1)); i++)
+		{
+			for (int l = x; l <= (x + (w - 1)); l++)
+			{
+				if (i <= (y + yb) || i >= y + (h - (1 + yb)) || l <= (x + xb) || l >= x + (w - (1 + xb)))
+				{
+					world[i][l] = e;
+				}
+				else
+				{
+					//This could be used for collision with a 2d array as bones later.
+					world[i][l] = f;
+				}
+
+
+			}
+
+		}
+
+		return 0;
+	}
+
+
+public:
+	int height = 20;
+	int width = 20;
+
+	int xBord = 0;
+	int yBord = 0;
+
+	float posX = playerX;
+	float posY = playerY;
+
+	int windowEdge = 1;
+	int windowFill = 4;
+
+	int showSelf()
+	{
+		drawSelf(height, width, xBord, yBord, posX, posY, windowEdge, windowFill);
+		return 0;
+	}
+
+
+};
+RectPlayer playerSprite;
+
+
 //Keep Adding Colors inside Cases.
+//HOLDS NOTHING YET, PUT PLAYER IN.
+class PlayerChar
+{
+private:
+	
+	
+
+
+public:
+	
+
+};
+
+
 int colorPicker(int i)
 {
 	switch (i)
@@ -154,7 +247,7 @@ int colorPicker(int i)
 
 
 
-//UI
+//UI Rects
 int uiConstruct()
 {
 
@@ -180,6 +273,36 @@ int uiConstruct()
 	return 0;
 }
 
+//
+int worldFill()
+{
+	Rect2 worldBorder;
+	worldBorder.height = 2000;
+	worldBorder.width = 2000;
+	worldBorder.posX = 0;
+	worldBorder.posY = 0;
+	worldBorder.xBord = 10;
+	worldBorder.yBord = 10;
+	worldBorder.windowEdge = 1;
+	worldBorder.windowFill = 2;
+	worldBorder.showSelf();
+
+	Rect2 building01;
+	building01.height = 40;
+	building01.width = 40;
+	building01.posX = 40;
+	building01.posY = 40;
+	building01.xBord = 4;
+	building01.yBord = 4;
+	building01.windowEdge = 1;
+	building01.windowFill = 3;
+	building01.showSelf();
+
+
+
+	return 0;
+}
+
 
 class olcEngine : public olc::PixelGameEngine
 {
@@ -192,7 +315,7 @@ public:
 public:
 	bool OnUserCreate() override
 	{
-		
+		//worldFill();
 
 		// Called once at the start, so create things here
 		return true;
@@ -200,12 +323,83 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
+		//Updates World Location
+		worldFill();
+
+		//UI Layout
 		uiConstruct();
+
+		//Player Drawings
+		playerSprite.showSelf();
+		playerSprite.posX = playerX;
+		playerSprite.posY = playerY;
+		int playNX = playerX;
+		int playNY = playerY;
+
+		int globalXN = globalX;
+		int globalYN = globalY;
+
+
+		if (GetKey(olc::Key::LEFT).bHeld)
+		{
+			if ((world[playNY][playNX - 1] == 2)&& world[playNY + 19][playNX - 1] == 2)
+			{
+				playerX -= (playerSpeed * fElapsedTime);
+				if ((globalX > 0 && playerX > 50) && playerX < 1920)
+				{
+					globalX -= (playerSpeed * fElapsedTime);
+				}
+			}
+			
+		};
+		if (GetKey(olc::Key::RIGHT).bHeld)
+		{
+			if ((world[playNY][playNX + 20] == 2) && world[playNY + 19][playNX + 20] == 2)
+			{
+				playerX += (playerSpeed * fElapsedTime);
+				if ((globalX < 2000 && playerX < 1920) && playerX > 120)
+				{
+					globalX += (playerSpeed * fElapsedTime);
+				}
+			}
+		}
+		if (GetKey(olc::Key::UP).bHeld)
+		{
+			if ((world[playNY - 1][playNX] == 2) && world[playNY - 1][playNX + 19] == 2)
+			{
+				playerY -= (playerSpeed * fElapsedTime);
+				if ((globalY > 0 && playerY > 50) && playerY < 1930)
+				{
+					globalY -= (playerSpeed * fElapsedTime);
+				}
+			}
+		}
+		if (GetKey(olc::Key::DOWN).bHeld) 
+		{
+			if ((world[playNY + 20][playNX] == 2) && world[playNY + 20][playNX + 19] == 2)
+			{
+				playerY += (playerSpeed * fElapsedTime);
+				if ((globalY < 2000 && playerY < 1920) && playerY > 70)
+				{
+					globalY += (playerSpeed * fElapsedTime);
+				}
+			}
+		}
+		playerSprite.showSelf();
+
 		// called once per frame
 		for (int y = 0; y <= ScreenHeight(); y++)
 			for (int x = 0; x <= ScreenWidth(); x++)
 			{
-				colorPicker(screen[x][y]);
+				if ((x > ((ScreenWidth() / 2) - 130) / 2 && x < ((ScreenWidth() / 2) + 99)) && (y > ((ScreenHeight() / 2) - 79) / 2 && y < ((ScreenHeight() / 2) + 49)))
+				{//(y > ((ScreenHeight() / 2) - 40) / 2 && y < ((ScreenHeight() / 2) + 30))
+					colorPicker(world[(y + globalYN)][(x + globalXN)]);
+				}
+				else
+				{
+					colorPicker(screen[y][x]);
+				}
+				
 				Draw(x, y, olc::Pixel(red, green, blue));
 			}
 		return true;
