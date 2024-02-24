@@ -8,6 +8,8 @@ float globalY = 0;
 int globalXN = globalX;
 int globalYN = globalY;
 
+
+
 //Player Vars
 float playerX = 150;
 float playerY = 50;
@@ -19,6 +21,9 @@ int playNY = playerY;
 //TIMER STUFF
 float fTargetFrameTime = 1.0f / 100.0f; // Virtual FPS of 100fps
 float fAccumulatedTime = 0.0f;
+
+
+
 
 
 //Play Window offset off Global X & Y.
@@ -217,6 +222,7 @@ public:
 };
 
 
+
 //Updated per frame based on the number inside the screen array @ pixel pos.
 //Need to add more colors and actually sort them.
 //Leave 1 - 10 for ground colors, or maybe 1 - 20.
@@ -229,30 +235,35 @@ int colorPicker(int i)
 	switch (i)
 	{
 	case 1: // Black
-		red = 0;
+		red   = 0;
 		green = 0;
-		blue = 0;
+		blue  = 0;
 		break;
 	case 2: //Grass - Light Green
-		red = 130;
+		red   = 130;
 		green = 255;
-		blue = 92;
+		blue  = 92;
 		break;
 	case 3: //Sky Blue
-		red = 87;
+		red   = 87;
 		green = 160;
-		blue = 212;
+		blue  = 212;
 		break;
 	case 4: //Steel Grey
-		red = 100;
+		red   = 100;
 		green = 109;
-		blue = 115;
+		blue  = 115;
 		break;
 	};
 
+	//Color Array for later use, once Pointers are figured.
+	//int redSel  [64] = { 46, 62,  98, 150, 171, 195, 127, 155, 199, 255, 110, 179, 234, 245, 174, 238, 251, 247, };
+	//int greenSel[64] = { 34, 53,  85, 108, 148,  79, 112, 171, 220, 255,  39,  55,  78, 125,  35, 135, 107, 150, };
+	//int blueSel [64] = { 47, 70, 101, 108, 122,  98, 138, 178, 208, 255,  39,  49,  54,  74,  51,  51,  29,  23, };
 
-
-	return 0;
+	
+	return 0;;
+	
 }
 
 
@@ -306,23 +317,44 @@ int worldFill()
 	building01.width = 40;
 	building01.posX = 40;
 	building01.posY = 40;
-	building01.xBord = 4;
-	building01.yBord = 4;
+	building01.xBord = 0;
+	building01.yBord = 0;
 	building01.windowEdge = 1;
 	building01.windowFill = 3;
 	building01.showSelf();
 
 	Rect2 building02;
 	building02.height = 40;
-	building02.width = 40;
+	building02.width = 100;
 	building02.posX = 200;
 	building02.posY = 70;
-	building02.xBord = 4;
-	building02.yBord = 4;
+	building02.xBord = 0;
+	building02.yBord = 0;
 	building02.windowEdge = 1;
-	building02.windowFill = 3;
+	building02.windowFill = 4;
 	building02.showSelf();
 
+	Rect2 building03;
+	building03.height = 40;
+	building03.width = 100;
+	building03.posX = 500;
+	building03.posY = 70;
+	building03.xBord = 0;
+	building03.yBord = 0;
+	building03.windowEdge = 1;
+	building03.windowFill = 4;
+	building03.showSelf();
+
+	Rect2 building04;
+	building04.height = 40;
+	building04.width = 400;
+	building04.posX = 1500;
+	building04.posY = 70;
+	building04.xBord = 0;
+	building04.yBord = 0;
+	building04.windowEdge = 1;
+	building04.windowFill = 4;
+	building04.showSelf();
 
 
 	return 0;
@@ -349,13 +381,15 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-
+		
 
 		//TIMER
 		fAccumulatedTime += fElapsedTime;
 
+	
 		//UPDATES FOR DRAWING
 		//UPDATES FOR DRAWING
+		
 		if (fAccumulatedTime >= fTargetFrameTime)
 		{
 			fAccumulatedTime -= fTargetFrameTime;
@@ -364,14 +398,15 @@ public:
 			uiConstruct();
 			playerSprite.showSelf();
 		}
-
 	
-		//Player POS UPDATES
-		playerSprite.posX = playerX;
-		playerSprite.posY = playerY;
-		//Player Float to Int
+		
+	
+		//playerSprite.showSelf();
+	
+		//Player POS to int
 		int playNX = playerX;
 		int playNY = playerY;
+
 
 		//Global Float to Int
 		int globalXN = globalX;
@@ -430,6 +465,10 @@ public:
 				}
 			}
 		}
+		
+		playerSprite.posX = playerX;
+		playerSprite.posY = playerY;
+		
 
 
 		// called once per frame
@@ -440,6 +479,7 @@ public:
 				if ((x > ((ScreenWidth() / 2) - 130) / 2 && x < ((ScreenWidth() / 2) + 99)) && (y > ((ScreenHeight() / 2) - 79) / 2 && y < ((ScreenHeight() / 2) + 49)))
 				{
 					colorPicker(world[(y + globalYN)][(x + globalXN)]);
+					
 				}
 				else
 				{
@@ -455,6 +495,8 @@ public:
 
 int main()
 {
+
+
 	olcEngine demo;
 	if (demo.Construct(300, 200, 4, 4))
 		demo.Start();
