@@ -12,6 +12,11 @@ int playNX = playerX;
 int playNY = playerY;
 
 
+//TIMER STUFF
+float fTargetFrameTime = 1.0f / 100.0f; // Virtual FPS of 100fps
+float fAccumulatedTime = 0.0f;
+
+
 //Play Window offset off Global X & Y.
 int world[2000][2000]{};
 
@@ -323,11 +328,23 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
+
 		//Updates World Location
-		worldFill();
+		//worldFill();
+
+
+		fAccumulatedTime += fElapsedTime;
+
+		if (fAccumulatedTime >= fTargetFrameTime)
+		{
+			fAccumulatedTime -= fTargetFrameTime;
+			fElapsedTime = fTargetFrameTime;
+			worldFill();
+			uiConstruct();
+		}
 
 		//UI Layout
-		uiConstruct();
+		//uiConstruct();
 
 		//Player Drawings
 		playerSprite.showSelf();
@@ -388,6 +405,7 @@ public:
 		playerSprite.showSelf();
 
 		// called once per frame
+		//VIDEO OUTPUT
 		for (int y = 0; y <= ScreenHeight(); y++)
 			for (int x = 0; x <= ScreenWidth(); x++)
 			{
