@@ -24,7 +24,8 @@ Learning C++ and building systems.
 //////////////////////////////////
 //Player Rect, Movement, and Collision, (Collision used to check the value at a array location based on Rect Origin plus Height and Width).
 //
-//Checks for a value at the location, also draws to screen off those values, rather than change coliision or adding another array, maybe Switch cases 1 - 10 can be floor colors.
+//Checks for a value at the location, also draws to screen off those values, 
+//rather than change coliision or adding another array, maybe Switch cases 1 - 10 can be floor colors.
 //Then if player detects a number under 11 in the array, it's walkable, instead of just 2 now, which is green.
 //
 //
